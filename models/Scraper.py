@@ -9,7 +9,7 @@ import os
 
 URL = "https://kworb.net/spotify/artists.html"
 
-class ScrapeBot:
+class Scraper:
     def __init__(self):
         # Adjusting selenium so that a browser doesn't open everytime we scrape
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36"
@@ -29,6 +29,15 @@ class ScrapeBot:
         self.options.add_argument('--no-sandbox')
         self.driver = webdriver.Chrome(executable_path=self.binary_location, options=self.options)
         self.driver.get(URL)
-        print(self.driver.title)
-
-
+        innerHTML = self.driver.execute_script("return document.body.innerHTML")
+        page = BeautifulSoup(innerHTML, "html.parser")
+        tables = page.findChildren("table")
+        my_table = tables[0]
+        rows = my_table.findChildren(['th', 'tr'])
+        for i in range(4,100):
+            cells = rows[i].findChildren('td')
+            link_raw = cells[1]
+            link = link_raw.findChildren('a')
+            link_clean = "https://kworb.net/spotify/" + link[0].get('href')
+            print(link_clean)
+            
