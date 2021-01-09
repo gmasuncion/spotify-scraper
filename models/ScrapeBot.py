@@ -1,9 +1,7 @@
 #!/bin/python env
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import json
 from selenium.webdriver.chrome.options import Options
-from datetime import datetime
 from local_settings import PATH
 
 # this will be used at deployment
