@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from local_settings import PATH
+from Artist import *
 
 # this will be used at deployment
 import os
@@ -28,6 +29,8 @@ class Scraper:
         self.options.add_argument('--disable-dev-shm-usage')
         self.options.add_argument('--no-sandbox')
         self.driver = webdriver.Chrome(executable_path=self.binary_location, options=self.options)
+
+    def scrape(self, target):
         self.driver.get(URL)
         innerHTML = self.driver.execute_script("return document.body.innerHTML")
         page = BeautifulSoup(innerHTML, "html.parser")
@@ -37,7 +40,21 @@ class Scraper:
         for i in range(4,100):
             cells = rows[i].findChildren('td')
             link_raw = cells[1]
-            link = link_raw.findChildren('a')
-            link_clean = "https://kworb.net/spotify/" + link[0].get('href')
-            print(link_clean)
+            name_clean = cells[1].text
+            if target.lower() == name_clean.lower():
+                link = link_raw.findChildren('a')
+                streams_raw = cells[2].text.split(",")
+                streams_clean = '' 
+                for e in streams_raw:
+                    streams_clean += e
+                link_clean = "https://kworb.net/spotify/" + link[0].get('href')
+                print("found")
+                return Artist(name_clean, link_clean, int(streams_clean))
+        print("not found")
+
+                
+
+
+            
+            
             
