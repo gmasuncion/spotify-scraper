@@ -36,7 +36,7 @@ class Scraper:
         - boolean telling us if the the artist exists in the top 100 or not
         - an instance of the Artist class representing the target, if they exist
         """
-        artist_table = get_table(URL)
+        artist_table = self.get_table(URL)
         for i in range(4,100):
             cells = artist_table[i].findChildren('td')
             link_raw = cells[1]
@@ -49,16 +49,16 @@ class Scraper:
                     streams_clean += e
                 link_clean = "https://kworb.net/spotify/" + link[0].get('href')
                 result_artist = Artist(name_clean,link_clean,streams_clean)
-                songs_table = get_table(link_clean)
+                songs_table = self.get_table(link_clean)
                 for i in range(69,79):
                     cells = songs_table[i].findChildren('td')
                     song_name = cells[1].text
                     song_streams = cells[3].text
                     result_artist.songs.append(Song(song_name, song_streams))
                 return result_artist
-        # fails silently, fix this
+        # fails silently, fix this  
     
-    def get_table(url):
+    def get_table(self, url):
         self.driver.get(url)
         innerHTML = self.driver.execute_script("return document.body.innerHTML")
         page = BeautifulSoup(innerHTML, "html.parser")
@@ -70,7 +70,7 @@ class Scraper:
 if __name__ == "__main__":
     x = Scraper()
     t = x.scrape_artist("drake")
-    print(t.songs)
+    print(t.songs[0].name)
 
 
             
