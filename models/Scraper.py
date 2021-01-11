@@ -53,43 +53,26 @@ class Scraper:
                 for e in streams_raw:
                     streams_clean += e
                 link_clean = "https://kworb.net/spotify/" + link[0].get('href')
-                return [True, Artist(name_clean, link_clean, int(streams_clean))]
-        return [False, None]
-    
-    """
-    I think the logic between the 2 scrapes is very similar if we can refactor
-    this into one method or put the similar parts into a helper that'd be really nice.
-    """
-
-    def scrape_songs(self, artist):
-        """
-        Takes in a target artist and will populate their respective Artist object with
-        their top 10 songs as instance of Song objects.
-        """
-        test = self.scrape_artist(artist)
-        if test[0]:
-            self.driver.get(test[1].url)
-            innerHTML = self.driver.execute_script("return document.body.innerHTML")
-            page = BeautifulSoup(innerHTML, "html.parser")
-            tables = page.findChildren("table")
-            my_table = tables[0]
-            rows = my_table.findChildren(['th', 'tr'])
-            # LMFAO for some reason the relevant rows of the table start showing up at index 69 o.O
-            for i in range(69,79):
-                cells = rows[i].findChildren('td')
-                name_clean = cells[1].text
-                streams_clean = cells[3].text
-                test[1].songs.append(Song("tesdt", 2))
-        else:
-            return None # fail silently for now, fix this later
-
+                result_artist = Artist(name_clean,link_clean,streams_clean)
+                songs_chart = self.driver.get(link_clean)
+                innerHTML = self.driver.execute_script("return document.body.innerHTML")
+                page = BeautifulSoup(innerHTML, "html.parser")
+                tables = page.findChildren("table")
+                my_table = tables[0]
+                rows = my_table.findChildren(['th', 'tr'])
+                # LMFAO for some reason the relevant rows of the table start showing up at index 69 o.O
+                for i in range(69,79):
+                    cells = rows[i].findChildren('td')
+                    song_name_clean = cells[1].text
+                    song_streams_clean = cells[3].text
+                    result_artist.songs.append(Song(song_name_clean, song_streams_clean))
+                return result_artist
+        # fails silently, fix this
+ 
 if __name__ == "__main__":
     x = Scraper()
     t = x.scrape_artist("drake")
-    print(t)
-    x.scrape_songs("drake")
-    print(t[1])
-    print(t[1].songs)
+    print(t.songs)
 
 
             
