@@ -36,14 +36,9 @@ class Scraper:
         - boolean telling us if the the artist exists in the top 100 or not
         - an instance of the Artist class representing the target, if they exist
         """
-        self.driver.get(URL)
-        innerHTML = self.driver.execute_script("return document.body.innerHTML")
-        page = BeautifulSoup(innerHTML, "html.parser")
-        tables = page.findChildren("table")
-        my_table = tables[0]
-        rows = my_table.findChildren(['th', 'tr'])
+        artist_table = get_table(URL)
         for i in range(4,100):
-            cells = rows[i].findChildren('td')
+            cells = artist_table[i].findChildren('td')
             link_raw = cells[1]
             name_clean = cells[1].text
             if target.lower() == name_clean.lower():
@@ -54,21 +49,24 @@ class Scraper:
                     streams_clean += e
                 link_clean = "https://kworb.net/spotify/" + link[0].get('href')
                 result_artist = Artist(name_clean,link_clean,streams_clean)
-                songs_chart = self.driver.get(link_clean)
-                innerHTML = self.driver.execute_script("return document.body.innerHTML")
-                page = BeautifulSoup(innerHTML, "html.parser")
-                tables = page.findChildren("table")
-                my_table = tables[0]
-                rows = my_table.findChildren(['th', 'tr'])
-                # LMFAO for some reason the relevant rows of the table start showing up at index 69 o.O
+                songs_table = get_table(link_clean)
                 for i in range(69,79):
-                    cells = rows[i].findChildren('td')
-                    song_name_clean = cells[1].text
-                    song_streams_clean = cells[3].text
-                    result_artist.songs.append(Song(song_name_clean, song_streams_clean))
+                    cells = songs_table[i].findChildren('td')
+                    song_name = cells[1].text
+                    song_streams = cells[3].text
+                    result_artist.songs.append(Song(song_name, song_streams))
                 return result_artist
         # fails silently, fix this
- 
+    
+    def get_table(url):
+        self.driver.get(url)
+        innerHTML = self.driver.execute_script("return document.body.innerHTML")
+        page = BeautifulSoup(innerHTML, "html.parser")
+        tables = page.findChildren("table")
+        my_table = tables[0]
+        rows = my_table.findChildren(['th', 'tr'])
+        return rows
+
 if __name__ == "__main__":
     x = Scraper()
     t = x.scrape_artist("drake")
