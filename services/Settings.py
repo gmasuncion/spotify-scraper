@@ -2,7 +2,7 @@ import local_settings
 
 class settings():
     
-    def __init__(self) -> None:
+    def __init__(self):
         self.settingsInfo = {}
         self.settingsInfo["PATH"] = local_settings.PATH
 
