@@ -2,9 +2,9 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from local_settings import PATH
-from Artist import *
-from Song import *
+from models import Artist
+from models import Song
+from services import Settings
 
 # this will be used at deployment
 import os
@@ -21,11 +21,13 @@ class Scraper:
     on both the searched artists and their songs.
     """
     def __init__(self):
+        self.settings = Settings.settings()
+
         # Adjusting selenium to a headless browser so a window doesn't open everytime we scrape
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36"
         self.options = webdriver.ChromeOptions()
         self.options.headless = True
-        self.binary_location = PATH
+        self.binary_location = self.settings.get_setting("PATH")
         for arg in args:
             self.options.add_argument(arg)
         self.driver = webdriver.Chrome(executable_path=self.binary_location, options=self.options)
@@ -48,13 +50,13 @@ class Scraper:
                 for e in streams_raw:
                     streams_clean += e
                 link_clean = "https://kworb.net/spotify/" + link[0].get('href')
-                result_artist = Artist(name_clean,link_clean,streams_clean)
+                result_artist = Artist.Artist(name_clean,link_clean,streams_clean)
                 songs_table = self.get_table(link_clean)
                 for i in range(69,79):
                     cells = songs_table[i].findChildren('td')
                     song_name = cells[1].text
                     song_streams = cells[3].text
-                    result_artist.songs.append(Song(song_name, song_streams))
+                    result_artist.songs.append(Song.Song(song_name, song_streams))
                 return result_artist
         # fails silently, fix this  
     
