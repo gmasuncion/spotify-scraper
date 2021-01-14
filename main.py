@@ -3,6 +3,7 @@ from flask.helpers import send_file
 from services import Scraper
 from services import Settings
 from services import GraphService
+import matplotlib.pyplot 
 
 app = Flask(__name__)
 
@@ -21,10 +22,11 @@ def comparisoninfo(name1, name2):
 
 @app.route("/fig/<name1>vs<name2>")
 def graph(name1,name2):
-    finder = Scraper()
+    matplotlib.pyplot.switch_backend('Agg')
+    finder = Scraper.Scraper()
     artist1 = finder.scrape_artist(name1)
     artist2 = finder.scrape_artist(name2)
-    gs = GraphService(artist1, artist2)
+    gs = GraphService.GraphService(artist1, artist2)
     graph = gs.createPlot()
     img = StringIO()
     graph.saveFig(img)

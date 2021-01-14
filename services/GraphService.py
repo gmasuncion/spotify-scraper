@@ -19,21 +19,32 @@ class GraphService:
         width = 0.4
         x = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 
-        fig = plot.figure()
+        
 
-        bar1 = numpy.arange(len(self.artist1songs))
+        bar1 = numpy.arange(len(self.artist1.songs))
         bar2 = [i+width for i in bar1]
 
-        fig.bar(bar1, self.artist1.songs, width, label = self.artist1.name)
-        fig.bar(bar2, self.artist2.songs, width, label = self.artist2.name)
+        artist1streams = self.getStreamsList(self.artist1)
+        artist2streams = self.getStreamsList(self.artist2)
 
-        fig.xlabel("Top Hits")
-        fig.ylabel("Number of Streams")
-        fig.title(self.artist1.name + " vs " + self.artist2.name)
-        fig.xticks(bar1 + width/2, x)
-        fig.legend()
+        plot.bar(bar1, artist1streams, width, label = self.artist1.name)
+        plot.bar(bar2, artist2streams, width, label = self.artist2.name)
+
+        plot.xlabel("Top Hits")
+        plot.ylabel("Number of Streams")
+        plot.title(self.artist1.name + " vs " + self.artist2.name)
+        plot.xticks(bar1 + width/2, x)
+        plot.legend()
+
+        fig = plot.figure(figsize=(8, 6))
 
         return fig
+
+    def getStreamsList(self, artist):
+        streamsList = []
+        for song in artist.songs:
+            streamsList.append(song.streams)
+        return streamsList
 
         
 
