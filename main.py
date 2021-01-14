@@ -1,6 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, request
+from flask.helpers import send_file
 from services import Scraper
 from services import Settings
+from services import GraphService
 
 
 
@@ -17,18 +19,21 @@ def home():
 
 @app.route("/compare/<artist1>vs<artist2>")
 def comparisoninfo(artist1, artist2):
-    s = Scraper.Scraper()
-    artist1 = s.scrape_artist(artist1)
-    artist2 = s.scrape_artist(artist2)
-    print(artist1.name + ":")
-    for song in artist1.songs:
-        print (song.name) 
-    print ("-----------------------")
-    print(artist2.name + ":")
-    for song in artist2.songs:
-        print (song.name) 
-    
-    return render_template("comparisonpage.html")
+    return render_template("comparisonpage.html", title = "artist1vsartist2")
+
+@app.route("/fig/<artist1>vs<artist2>")
+def graph(artist1, artist2):
+    gs = GraphService(artist1, artist2)
+    graph = gs.createPlot()
+    img = StringIO()
+    graph.saveFig(img)
+    img.seek(0)
+    return send_file(img, mimetype='image/png')
+
+
+
+
+
 
 
 

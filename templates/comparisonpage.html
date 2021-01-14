@@ -1,7 +1,12 @@
 {% block title %}Comparison Page{% endblock %}
 
 {% block content %}
-
-<h1>It worked</h1>
+<head> 
+<title>{{ title }} - image</title>
+</head>
+<body>
+    <img src="{{ url_for('graph', artist1 = a1, artist2 = a2) }}" alt="Image Placeholder" height="100">
+</body>
+</body>
 
 {% endblock %}
