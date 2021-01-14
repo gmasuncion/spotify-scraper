@@ -11,15 +11,9 @@ class GraphService:
 
     def __init__(self, artist1, artist2):
         self.artist1 = artist1
-        self.artist1songs = self.generateSongList(artist1)
+        #self.artist1songs = self.generateSongList(artist1)
         self.artist2 = artist2
-        self.artist2songs = self.generateSongList(artist2)       
-
-    def generateSongList(self, artist):
-        songList = []
-        for song in artist.songs:
-            songList.append(song)
-        return songList
+        #self.artist2songs = self.generateSongList(artist2)       
 
     def createPlot(self):
         width = 0.4
@@ -30,8 +24,8 @@ class GraphService:
         bar1 = numpy.arange(len(self.artist1songs))
         bar2 = [i+width for i in bar1]
 
-        fig.bar(bar1, self.artist1songs, width, label = self.artist1.name)
-        fig.bar(bar2, self.artist2songs, width, label = self.artist2.name)
+        fig.bar(bar1, self.artist1.songs, width, label = self.artist1.name)
+        fig.bar(bar2, self.artist2.songs, width, label = self.artist2.name)
 
         fig.xlabel("Top Hits")
         fig.ylabel("Number of Streams")
