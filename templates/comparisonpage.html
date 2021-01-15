@@ -2,11 +2,10 @@
 
 {% block content %}
 <head> 
-<title>{{ name1 }} - image</title>
-<title>{{ name2 }} - image</title>
+<title>{{ name1 }} vs {{ name2 }}</title>
 </head>
 <body>
-    <img src="{{ url_for('graph', name1=name1,name2=name2) }}" alt="Image Placeholder" height="100">
+    <img src={{url}} alt="Chart" height="auto" width="100%">
 </body>
 </body>
 
