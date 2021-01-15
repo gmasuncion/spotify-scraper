@@ -9,11 +9,12 @@ import numpy
 app = Flask(__name__)
 from os import path
 import os
+import shutil
 
 @app.route("/", methods=["POST", "GET"])
 def home():
-    if path.exists('static/images/plot.png'):
-        os.remove('static/images/plot.png')
+    if path.exists('/static/images/'):
+        shutil.rmtree('/static/images/')
     if request.method == "POST":
         artist1name = request.form["artist1"]
         artist2name = request.form["artist2"]
@@ -44,7 +45,8 @@ def comparisoninfo(name1, name2):
     plt.title(artist1.name + " vs " + artist2.name)
     plt.xticks(bar1 + width/2, x)
     plt.legend()
-    plt.savefig('static/images/plot.png')
+    os.mkdir('/static/images/')
+    plt.savefig('/static/images/plot.png')
     return render_template("comparisonpage.html", title = "artist1vsartist2", name1=name1, name2=name2, url='/static/images/plot.png')
 
 
